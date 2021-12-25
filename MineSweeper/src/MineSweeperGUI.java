@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import java.text.DecimalFormat;
 
 public class MineSweeperGUI extends Application {
     
@@ -23,7 +25,25 @@ public class MineSweeperGUI extends Application {
         Scene scene = new Scene(grid, 290, 350);
         
         Label mines = new Label("010");
-        Label timeElapsed = new Label("00:00");
+
+        Label main_clock_lb = new Label();
+        long startStopWatch = System.currentTimeMillis();
+        Thread timerThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000); // 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final double time = System.currentTimeMillis();
+                double timeE = (time - startStopWatch) / 10000;
+                Platform.runLater(() -> {
+                    main_clock_lb.setText(new DecimalFormat("##.##").format(timeE));
+                    grid.add(main_clock_lb, 8, 0);
+                });
+            }
+        });   timerThread.start();
+
 
         Image smilePNG = new Image("pics/smile.png");
         ImageView smileIV = new ImageView(smilePNG);
@@ -51,10 +71,7 @@ public class MineSweeperGUI extends Application {
         flagIV.setFitWidth(25);
 
         grid.add(mines, 2, 0);
-        grid.add(timeElapsed, 8, 0);
         grid.add(smileIV, 5, 0);
-        
-
 
         btn.setMaxHeight(50);
         btn.setMinHeight(50);

@@ -1,7 +1,4 @@
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -11,9 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import java.text.DecimalFormat;
 
-import javax.sound.sampled.SourceDataLine;
 
 public class MineSweeperGUI extends Application {
     
@@ -81,11 +76,18 @@ public class MineSweeperGUI extends Application {
         btn.setMaxHeight(50);
         btn.setMinHeight(50);
 
+
+        int [] mineValue = new int[81];
+
         int btnID = 0;
+        MineSweeper mine = new MineSweeper();
+        mine.toString();
         for (int r = 1; r < 10; r++){
             for (int c = 1; c < 10; c++){
+                mineValue[btnID] = mine.getBlock(r, c);
                 btn = new Button();
                 btn.setId(String.valueOf(btnID));
+                btn.setText(String.valueOf(mine.getBlock(r-1, c-1)));
                 btn.setOnAction(event -> {
                     Node node = (Node) event.getTarget();
                     System.out.println(  node.getId() ); 

@@ -1,2 +1,2 @@
 # MineSweeper
-MineSweeper Game in Java
+GUI MineSweeper Game in Java

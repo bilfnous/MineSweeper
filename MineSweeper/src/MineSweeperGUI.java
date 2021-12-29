@@ -1,4 +1,7 @@
+import java.text.DecimalFormat;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SetProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -6,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -84,25 +88,36 @@ public class MineSweeperGUI extends Application {
         mine.toString();
         for (int r = 1; r < 10; r++){
             for (int c = 1; c < 10; c++){
-                mineValue[btnID] = mine.getBlock(r, c);
+                mineValue[btnID] = mine.getBlock(r-1, c-1);
                 btn = new Button();
                 btn.setId(String.valueOf(btnID));
-                btn.setText(String.valueOf(mine.getBlock(r-1, c-1)));
-                btn.setOnAction(event -> {
+                btn.setOnMouseClicked(event -> {
                     Node node = (Node) event.getTarget();
-                    System.out.println(  node.getId() ); 
+                    if(event.getButton() == MouseButton.SECONDARY){
+                        
+                    }
+                    else if(event.getButton() == MouseButton.PRIMARY) {
+                                               
+                    }                      
                 });
+
                 btnID++;
                 btn.setPrefSize(30, 30);
                 grid.add(btn,r,c);
             }
         }
-        
+
+       
         grid.setGridLinesVisible(false);
                
         primaryStage.setTitle("Mine Sweeper");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+
+    private Object add(ImageView flagIV) {
+        return null;
     }
 
 

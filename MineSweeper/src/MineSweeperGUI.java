@@ -1,7 +1,8 @@
 import java.text.DecimalFormat;
+import java.util.concurrent.TimeUnit;
+
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.SetProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -30,23 +31,26 @@ public class MineSweeperGUI extends Application {
         
         Label mines = new Label("010");
 
-        // Label main_clock_lb = new Label();
-        // long startStopWatch = System.currentTimeMillis();
-        // Thread timerThread = new Thread(() -> {
-        //     while (true) {
-        //         try {
-        //             Thread.sleep(1000); // 1 second
-        //         } catch (InterruptedException e) {
-        //             e.printStackTrace();
-        //         }
-        //         final double time = System.currentTimeMillis();
-        //         double timeE = (time - startStopWatch) / 10000;
-        //         Platform.runLater(() -> {
-        //             main_clock_lb.setText(new DecimalFormat("##.##").format(timeE));
-        //             grid.add(main_clock_lb, 8, 0);
-        //         });
-        //     }
-        // });   timerThread.start();
+        Label main_clock_lb = new Label();
+        long startStopWatch = System.currentTimeMillis();
+        Thread timerThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000); // 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final double time = System.currentTimeMillis();
+                double timeE = (time - startStopWatch);
+                int second = (int)TimeUnit.MILLISECONDS.toSeconds((long) timeE);
+                int seconds = second % 60;
+                int minute = second / 60;
+                Platform.runLater(() -> {
+                    main_clock_lb.setText(String.valueOf(minute + ":" + seconds));
+                    grid.add(main_clock_lb, 8, 0);
+                });
+            }
+        });   timerThread.start();
 
 
         Image smilePNG = new Image("pics/smile.png");
@@ -93,11 +97,17 @@ public class MineSweeperGUI extends Application {
                 btn.setId(String.valueOf(btnID));
                 btn.setOnMouseClicked(event -> {
                     Node node = (Node) event.getTarget();
-                    if(event.getButton() == MouseButton.SECONDARY){
-                        
+                    if(event.getButton() == MouseButton.SECONDARY){ 
+                        int x = (int) node.getLayoutX() / 30 + 1;
+                        int y = ((int) node.getLayoutY() / 30);
+                        if (y == 10) { y = 9; }
+                        System.out.println("  x " + x + "  y "+ y); 
+                       grid.add(flagIV, x, y);
                     }
                     else if(event.getButton() == MouseButton.PRIMARY) {
-                                               
+                            int x = (int) node.getLayoutX() / 30 + 1;
+                            int y = ((int) node.getLayoutY() / 30);
+                            System.out.println("  x " + x + "  y "+ y);                   
                     }                      
                 });
 
@@ -113,11 +123,6 @@ public class MineSweeperGUI extends Application {
         primaryStage.setTitle("Mine Sweeper");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-
-    private Object add(ImageView flagIV) {
-        return null;
     }
 
 

@@ -1,6 +1,4 @@
-import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 
 
 public class MineSweeperGUI extends Application {
-    
     @Override
     public void start(Stage primaryStage) {
     
@@ -25,11 +22,10 @@ public class MineSweeperGUI extends Application {
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(1);
         grid.setVgap(1);
-        //grid.setPadding(new Insets());
         
         Scene scene = new Scene(grid, 290, 350);
         
-        Label mines = new Label("010");
+        Label mines = new Label("00");
 
         Label main_clock_lb = new Label();
         long startStopWatch = System.currentTimeMillis();
@@ -74,9 +70,6 @@ public class MineSweeperGUI extends Application {
         explosionIV.setFitHeight(25);
         explosionIV.setFitWidth(25);
         Image flagPNG = new Image("pics/flag.png");
-        ImageView flagIV = new ImageView(flagPNG);
-        flagIV.setFitHeight(25);
-        flagIV.setFitWidth(25);
 
         grid.add(mines, 2, 0);
         grid.add(smileIV, 5, 0);
@@ -86,29 +79,47 @@ public class MineSweeperGUI extends Application {
 
 
         int [] mineValue = new int[81];
+        int [] markedButtons = new int[81];
 
         int btnID = 0;
         MineSweeper mine = new MineSweeper();
         mine.toString();
         for (int r = 1; r < 10; r++){
             for (int c = 1; c < 10; c++){
-                mineValue[btnID] = mine.getBlock(r-1, c-1);
+                //mineValue[btnID] = mine.getBlock(r-1, c-1);
                 btn = new Button();
                 btn.setId(String.valueOf(btnID));
                 btn.setOnMouseClicked(event -> {
                     Node node = (Node) event.getTarget();
-                    if(event.getButton() == MouseButton.SECONDARY){ 
-                        int x = (int) node.getLayoutX() / 30 + 1;
-                        int y = ((int) node.getLayoutY() / 30);
-                        if (y == 10) { y = 9; }
-                        System.out.println("  x " + x + "  y "+ y); 
-                       grid.add(flagIV, x, y);
+                    int x = (int) node.getLayoutX() / 30 + 1;
+                    int y = ((int) node.getLayoutY() / 30);
+                    if (y == 10) { y = 9; }
+                    if(event.getButton() == MouseButton.SECONDARY){
+                        int marked = mine.remainingFlags();
+                        ImageView flagIV = new ImageView(flagPNG);
+                        flagIV.setFitHeight(25);
+                        flagIV.setFitWidth(25);
+                        
+                        flagIV.setOnMouseClicked( flagEvent -> {
+                            if(flagEvent.getButton() == MouseButton.SECONDARY){
+                                grid.getChildren().remove(flagIV);
+                                int marked1 = mine.incFlags();
+                                markedButtons[Integer.valueOf(node.getId())] = 0;
+                                mines.setText(Integer.toString(marked1 - 1));
+                            }
+                        });
+
+                        if( ( marked  > 0)  && (markedButtons[Integer.valueOf(node.getId())] == 0) ){
+                            mine.decFlags();
+                            markedButtons[Integer.valueOf(node.getId())] = 1;
+                            mines.setText(Integer.toString(marked - 1));
+                            grid.add(flagIV, x, y);
+                        }
                     }
                     else if(event.getButton() == MouseButton.PRIMARY) {
-                            int x = (int) node.getLayoutX() / 30 + 1;
-                            int y = ((int) node.getLayoutY() / 30);
-                            System.out.println("  x " + x + "  y "+ y);                   
-                    }                      
+                            
+                                            
+                    }
                 });
 
                 btnID++;

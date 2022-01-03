@@ -7,12 +7,22 @@ public class MineSweeper {
     private static final int ROW = 9;
     private static final int COLUMN = 9;
     private static final int MINES = 10;
-
+    private int mines = MINES;
     private int[][] grid = new int[ROW] [COLUMN];
 
     public MineSweeper() {
         initMines();
         mineIndicator();
+    }
+
+    public int remainingFlags(){
+        return mines;
+    }
+    public int decFlags(){
+        return mines--;
+    }
+    public int incFlags(){
+        return mines++;
     }
 
     public void setFlag(int row, int col) {

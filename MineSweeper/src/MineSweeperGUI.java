@@ -58,17 +58,12 @@ public class MineSweeperGUI extends Application {
         coolIV.setFitHeight(30);
         coolIV.setFitWidth(30);
         Image deadPNG = new Image("pics/dead.png");
-        ImageView deadIV = new ImageView(deadPNG);
-        deadIV.setFitHeight(30);
-        deadIV.setFitWidth(30);
         Image minePNG = new Image("pics/mine.png");
         ImageView mineIV = new ImageView(minePNG);
         mineIV.setFitHeight(25);
         mineIV.setFitWidth(25);
         Image explosionPNG = new Image("pics/explosion.png");
-        ImageView explosionIV = new ImageView(explosionPNG);
-        explosionIV.setFitHeight(25);
-        explosionIV.setFitWidth(25);
+
         Image flagPNG = new Image("pics/flag.png");
 
         grid.add(mines, 2, 0);
@@ -79,14 +74,14 @@ public class MineSweeperGUI extends Application {
 
 
         int [] mineValue = new int[81];
-        int [] markedButtons = new int[81];
+        int [] flaggedButtons = new int[81];
 
         int btnID = 0;
         MineSweeper mine = new MineSweeper();
         mine.toString();
         for (int r = 1; r < 10; r++){
             for (int c = 1; c < 10; c++){
-                //mineValue[btnID] = mine.getBlock(r-1, c-1);
+                mineValue[btnID] = mine.getBlock(r-1, c-1);
                 btn = new Button();
                 btn.setId(String.valueOf(btnID));
                 btn.setOnMouseClicked(event -> {
@@ -104,21 +99,48 @@ public class MineSweeperGUI extends Application {
                             if(flagEvent.getButton() == MouseButton.SECONDARY){
                                 grid.getChildren().remove(flagIV);
                                 int marked1 = mine.incFlags();
-                                markedButtons[Integer.valueOf(node.getId())] = 0;
+                                flaggedButtons[Integer.valueOf(node.getId())] = 0;
                                 mines.setText(Integer.toString(marked1 - 1));
                             }
                         });
 
-                        if( ( marked  > 0)  && (markedButtons[Integer.valueOf(node.getId())] == 0) ){
+                        if( ( marked  > 0)  && (flaggedButtons[Integer.valueOf(node.getId())] == 0) ){
                             mine.decFlags();
-                            markedButtons[Integer.valueOf(node.getId())] = 1;
+                            flaggedButtons[Integer.valueOf(node.getId())] = 1;
                             mines.setText(Integer.toString(marked - 1));
                             grid.add(flagIV, x, y);
                         }
                     }
                     else if(event.getButton() == MouseButton.PRIMARY) {
-                            
-                                            
+                    
+                        if(flaggedButtons[Integer.valueOf(node.getId())] == 1){
+                            // If a button is flagged, do nothing
+                        } 
+                        else {
+                            if(mineValue[Integer.valueOf(node.getId())] == -1){
+                                // check for mine
+                                ImageView deadIV = new ImageView(deadPNG);
+                                deadIV.setFitHeight(30);
+                                deadIV.setFitWidth(30);
+                                grid.getChildren().remove(smileIV);
+                                grid.add(deadIV, 5, 0);
+                                ImageView explosionIV = new ImageView(explosionPNG);
+                                explosionIV.setFitHeight(25);
+                                explosionIV.setFitWidth(25);
+                                grid.add(explosionIV, x, y);
+                                
+                                //timerThread.stop();
+                                
+                            }
+                            else {
+                                // no mine, clear squares, show numbers to indicate mines
+                                node.setStyle("-fx-background-color:808080;");
+                                if(mineValue[Integer.valueOf(node.getId())] >= 0){
+                                    Label minesIndicator = new Label(String.valueOf(  mineValue[Integer.valueOf(node.getId())] ) );
+                                }                                
+                            }
+                        }
+
                     }
                 });
 

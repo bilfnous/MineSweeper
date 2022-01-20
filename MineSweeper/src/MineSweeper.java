@@ -8,6 +8,7 @@ public class MineSweeper {
     private static final int COLUMN = 9;
     private static final int MINES = 10;
     private int mines = MINES;
+    private int cleared = 0;
     private int[][] grid = new int[ROW] [COLUMN];
 
     public MineSweeper() {
@@ -52,6 +53,14 @@ public class MineSweeper {
                 i++;    
             }
         }
+    }
+
+    public boolean fieldCleard(){
+        cleared++;
+        if(cleared == 71){
+            return true;
+        }
+        return false;
     }
 
     public void mineIndicator() {

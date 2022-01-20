@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -54,9 +55,6 @@ public class MineSweeperGUI extends Application {
         smileIV.setFitHeight(30);
         smileIV.setFitWidth(30);
         Image coolPNG = new Image("pics/cool.png");
-        ImageView coolIV = new ImageView(coolPNG);
-        coolIV.setFitHeight(30);
-        coolIV.setFitWidth(30);
         Image deadPNG = new Image("pics/dead.png");
         Image minePNG = new Image("pics/mine.png");
         ImageView mineIV = new ImageView(minePNG);
@@ -81,7 +79,7 @@ public class MineSweeperGUI extends Application {
         mine.toString();
         for (int r = 1; r < 10; r++){
             for (int c = 1; c < 10; c++){
-                mineValue[btnID] = mine.getBlock(r-1, c-1);
+                mineValue[btnID] = mine.getBlock(c-1, r-1);
                 btn = new Button();
                 btn.setId(String.valueOf(btnID));
                 btn.setOnMouseClicked(event -> {
@@ -89,12 +87,14 @@ public class MineSweeperGUI extends Application {
                     int x = (int) node.getLayoutX() / 30 + 1;
                     int y = ((int) node.getLayoutY() / 30);
                     if (y == 10) { y = 9; }
+                    // Add & Remove Flag
                     if(event.getButton() == MouseButton.SECONDARY){
                         int marked = mine.remainingFlags();
                         ImageView flagIV = new ImageView(flagPNG);
                         flagIV.setFitHeight(25);
                         flagIV.setFitWidth(25);
                         
+                        // Remove Flag
                         flagIV.setOnMouseClicked( flagEvent -> {
                             if(flagEvent.getButton() == MouseButton.SECONDARY){
                                 grid.getChildren().remove(flagIV);
@@ -103,7 +103,7 @@ public class MineSweeperGUI extends Application {
                                 mines.setText(Integer.toString(marked1 - 1));
                             }
                         });
-
+                        // Add flag if there is no flag 
                         if( ( marked  > 0)  && (flaggedButtons[Integer.valueOf(node.getId())] == 0) ){
                             mine.decFlags();
                             flaggedButtons[Integer.valueOf(node.getId())] = 1;
@@ -112,11 +112,12 @@ public class MineSweeperGUI extends Application {
                         }
                     }
                     else if(event.getButton() == MouseButton.PRIMARY) {
-                    
+                        
                         if(flaggedButtons[Integer.valueOf(node.getId())] == 1){
                             // If a button is flagged, do nothing
                         } 
                         else {
+                            // Behaviour if mine is clicked 
                             if(mineValue[Integer.valueOf(node.getId())] == -1){
                                 // check for mine
                                 ImageView deadIV = new ImageView(deadPNG);
@@ -128,15 +129,27 @@ public class MineSweeperGUI extends Application {
                                 explosionIV.setFitHeight(25);
                                 explosionIV.setFitWidth(25);
                                 grid.add(explosionIV, x, y);
-                                
-                                //timerThread.stop();
-                                
+
                             }
                             else {
                                 // no mine, clear squares, show numbers to indicate mines
                                 node.setStyle("-fx-background-color:808080;");
                                 if(mineValue[Integer.valueOf(node.getId())] >= 0){
                                     Label minesIndicator = new Label(String.valueOf(  mineValue[Integer.valueOf(node.getId())] ) );
+                                    // mine indicator 
+                                    if( mineValue[Integer.valueOf(node.getId())] > 0){
+                                        grid.add(minesIndicator, x, y);
+                                    }
+                                    
+                                    // check if the game is won
+                                    if(mine.fieldCleard()){
+                                        ImageView coolIV = new ImageView(coolPNG);
+                                        coolIV.setFitHeight(30);
+                                        coolIV.setFitWidth(30);
+                                        grid.getChildren().remove(smileIV);
+                                        grid.add(coolIV, 5, 0);
+                                    }
+
                                 }                                
                             }
                         }
